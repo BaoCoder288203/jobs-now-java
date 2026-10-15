@@ -44,4 +44,12 @@ public class CentralExceptions {
         return ResponseEntity.ok(response);
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> handleGeneralException(Exception ex) {
+        BaseResponse response = new BaseResponse();
+        response.setCode(500);
+        response.setMessage(ex.getMessage() != null ? ex.getMessage() : "Internal server error");
+        return ResponseEntity.status(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
+
 }

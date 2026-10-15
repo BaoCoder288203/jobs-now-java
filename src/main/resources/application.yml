@@ -78,9 +78,10 @@ aws:
     endpointUrl: ${AWS_S3_ENDPOINT_URL}
 openai:
   api-key: ${OPENAI_API_KEY}
-  model: gpt-4o-mini
+  model: ${OPENAI_MODEL:gemini-3.5-flash-lite}
   max-tokens: 3000
-  base-url: https://api.openai.com/v1
+  base-url: ${OPENAI_BASE_URL:https://generativelanguage.googleapis.com/v1beta/openai}
+  embedding-model: ${OPENAI_EMBEDDING_MODEL:gemini-embedding-001}
 
 vnpay:
   url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html

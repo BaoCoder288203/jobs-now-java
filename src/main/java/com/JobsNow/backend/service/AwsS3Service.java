@@ -1,6 +1,5 @@
 package com.JobsNow.backend.service;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Backoff;
@@ -20,10 +19,14 @@ import java.time.Duration;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class AwsS3Service {
     private final S3Client s3Client;
     private final S3Presigner s3Presigner;
+
+    public AwsS3Service(S3Client s3Client, S3Presigner s3Presigner) {
+        this.s3Client = s3Client;
+        this.s3Presigner = s3Presigner;
+    }
 
     @Value("${aws.s3.bucketName}")
     private String bucketName;
@@ -34,24 +37,31 @@ public class AwsS3Service {
     @Retryable(value = { S3Exception.class }, maxAttempts = 3, backoff = @Backoff(delay = 2000))
     public String uploadFileToS3(InputStream inputStream, String s3Key, String contentType) {
         try {
+            byte[] bytes = inputStream.readAllBytes();
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(s3Key)
                     .contentType(contentType)
+                    .contentLength((long) bytes.length)
                     .build();
 
-            s3Client.putObject(putObjectRequest, RequestBody.fromInputStream(inputStream, inputStream.available()));
+            s3Client.putObject(putObjectRequest, RequestBody.fromBytes(bytes));
 
+            String cleanKey = s3Key.startsWith("/") ? s3Key.substring(1) : s3Key;
             String baseUrl = endpointURL.endsWith("/") ? endpointURL : endpointURL + "/";
-            return baseUrl + s3Key;
+            return baseUrl + bucketName + "/" + cleanKey;
+        } catch (S3Exception e) {
+            log.error("AWS S3 upload error - bucket: {}, key: {}, awsError: {}", bucketName, s3Key,
+                    e.awsErrorDetails() != null ? e.awsErrorDetails().errorMessage() : e.getMessage(), e);
+            throw e;
         } catch (Exception e) {
             log.error("AWS S3 upload error - bucket: {}, key: {}, error: {}", bucketName, s3Key, e.getMessage(), e);
-            throw new RuntimeException("Upload file failed", e);
+            throw new RuntimeException("Upload file failed: " + e.getMessage(), e);
         } finally {
             try {
                 inputStream.close();
             } catch (IOException ex) {
-                System.err.println("Error closing input stream: " + ex.getMessage());
+                log.warn("Error closing input stream: {}", ex.getMessage());
             }
         }
     }

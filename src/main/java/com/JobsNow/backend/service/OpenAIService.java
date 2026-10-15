@@ -25,7 +25,8 @@ public class OpenAIService {
     }
 
     public String chatCompletion(String systemPrompt, String userPrompt) {
-        String url = baseUrl + "/chat/completions";
+        String cleanBaseUrl = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
+        String url = cleanBaseUrl + "/chat/completions";
         Map<String, Object> requestBody = Map.of(
                 "model", model,
                 "max_tokens", maxTokens,

@@ -25,15 +25,19 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String authHeader = request.getHeader("Authorization");
         if(authHeader !=null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
-            String email = jwtHelper.validateToken(token);
-            if(email!=null && !email.isEmpty()){
-                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+            try {
+                String token = authHeader.substring(7);
+                String email = jwtHelper.validateToken(token);
+                if(email!=null && !email.isEmpty()){
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-                UsernamePasswordAuthenticationToken authenticationToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-                SecurityContext context = SecurityContextHolder.getContext();
-                context.setAuthentication(authenticationToken);
+                    UsernamePasswordAuthenticationToken authenticationToken =
+                            new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+                    SecurityContext context = SecurityContextHolder.getContext();
+                    context.setAuthentication(authenticationToken);
+                }
+            } catch (Exception e) {
+                SecurityContextHolder.clearContext();
             }
         }
         filterChain.doFilter(request, response);

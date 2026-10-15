@@ -41,11 +41,17 @@ public class CandidateRAGServiceImpl implements CandidateRAGService {
     @Value("${openai.max-tokens}")
     private int maxTokens;
 
-    private static final String EMBEDDING_MODEL = "text-embedding-3-small";
+    @Value("${openai.embedding-model:text-embedding-004}")
+    private String embeddingModel;
+
     private static final String EMBEDDING_KEY_PREFIX = "rag:profile:embedding:";
     private static final String PROFILE_TEXT_KEY_PREFIX = "rag:profile:text:";
     private static final String PROFILE_META_KEY_PREFIX = "rag:profile:meta:";
     private static final String ALL_PROFILE_IDS_KEY = "rag:profile:ids";
+
+    private String getCleanBaseUrl() {
+        return baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
+    }
 
     public CandidateRAGServiceImpl(
             JobSeekerProfileRepository jobSeekerProfileRepository,
@@ -303,11 +309,11 @@ public class CandidateRAGServiceImpl implements CandidateRAGService {
     private float[] getEmbedding(String text) {
         try {
             Map<String, Object> requestBody = new HashMap<>();
-            requestBody.put("model", EMBEDDING_MODEL);
+            requestBody.put("model", embeddingModel);
             requestBody.put("input", text);
 
             ResponseEntity<Map> response = openAIRestTemplate.postForEntity(
-                    baseUrl + "/embeddings",
+                    getCleanBaseUrl() + "/embeddings",
                     requestBody,
                     Map.class
             );
@@ -345,7 +351,7 @@ public class CandidateRAGServiceImpl implements CandidateRAGService {
         requestBody.put("messages", messages);
 
         ResponseEntity<Map> response = openAIRestTemplate.postForEntity(
-                baseUrl + "/chat/completions",
+                getCleanBaseUrl() + "/chat/completions",
                 requestBody,
                 Map.class
         );

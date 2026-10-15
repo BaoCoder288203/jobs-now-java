@@ -2,7 +2,14 @@
 application-local.yml
 *.log
 target/
+# macOS / AppleDouble metadata
 .DS_Store
+._*
+.Spotlight-V100
+.Trashes
+.agents/
+skills-lock.json
+
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar

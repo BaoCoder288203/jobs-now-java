@@ -20,6 +20,7 @@ import com.JobsNow.backend.service.CompanyQuotaService;
 import com.JobsNow.backend.service.JobMatchService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/ai")
 @RequiredArgsConstructor
@@ -66,7 +68,7 @@ public class AICVController {
         }
         var profile = profileId != null
                 ? jobSeekerProfileRepository.findById(profileId)
-                    .orElseThrow(() -> new NotFoundException("Profile not found"))
+                        .orElseThrow(() -> new NotFoundException("Profile not found"))
                 : null;
         return ResponseFactory.success(cvImportService.parseFromFile(file, profile));
     }
@@ -105,7 +107,7 @@ public class AICVController {
     public ResponseEntity<?> suggestJobDraft(
             @Valid @RequestBody SuggestJobDraftRequest request,
             Authentication authentication) {
-        if (!isCompany(authentication)) {
+        if (!isCompanyOrAdmin(authentication)) {
             return ResponseFactory.error(403, "Forbidden", HttpStatus.FORBIDDEN);
         }
         consumeAiScanIfCompany(authentication);
@@ -125,13 +127,15 @@ public class AICVController {
 
     @GetMapping("/job-match/my-matches/{profileId}")
     public ResponseEntity<?> getMatchedJobs(@PathVariable Integer profileId) {
-        List<JobMatchScore> scores = jobMatchScoreRepository.findTop5ByProfileProfileIdAndOverallScoreGreaterThanOrderByOverallScoreDesc(profileId, 0);
+        List<JobMatchScore> scores = jobMatchScoreRepository
+                .findTop5ByProfileProfileIdAndOverallScoreGreaterThanOrderByOverallScoreDesc(profileId, 0);
         return ResponseFactory.success(scores.stream().map(JobMatchScoreMapper::toDTO).toList());
     }
 
     @GetMapping("/job-match/candidates/{jobId}")
     public ResponseEntity<?> getMatchedCandidates(@PathVariable Integer jobId) {
-        List<JobMatchScore> scores = jobMatchScoreRepository.findTop10ByJobJobIdAndOverallScoreGreaterThanOrderByOverallScoreDesc(jobId, 0);
+        List<JobMatchScore> scores = jobMatchScoreRepository
+                .findTop10ByJobJobIdAndOverallScoreGreaterThanOrderByOverallScoreDesc(jobId, 0);
         return ResponseFactory.success(scores.stream().map(JobMatchScoreMapper::toDTO).toList());
     }
 
@@ -151,8 +155,20 @@ public class AICVController {
         if (!isCompany(authentication)) {
             return;
         }
-        Integer userId = getUserId(authentication);
-        companyQuotaService.consumeAiScanForCompanyUser(userId, 1);
+        try {
+            Integer userId = getUserId(authentication);
+            companyQuotaService.consumeAiScanForCompanyUser(userId, 1);
+        } catch (Exception e) {
+            log.warn("Could not consume AI scan quota for company user: {}", e.getMessage());
+        }
+    }
+
+    private boolean isCompanyOrAdmin(Authentication authentication) {
+        if (authentication == null) {
+            return false;
+        }
+        return authentication.getAuthorities().stream()
+                .anyMatch(a -> "ROLE_COMPANY".equals(a.getAuthority()) || "ROLE_ADMIN".equals(a.getAuthority()));
     }
 
     private boolean isCompany(Authentication authentication) {

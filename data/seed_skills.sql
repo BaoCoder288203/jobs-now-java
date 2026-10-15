@@ -1,0 +1,207 @@
+-- ==============================================================================
+-- Seed Data for Skill (Kỹ năng)
+-- Database: Neon PostgreSQL (jobsnow)
+-- ==============================================================================
+
+BEGIN;
+
+-- 1. Reset bảng skill (an toàn nếu chưa có ứng viên hay tin tuyển dụng gắn kỹ năng)
+TRUNCATE TABLE jobseeker_skill, resume_skill, job_skill, skill RESTART IDENTITY CASCADE;
+
+-- 2. Thêm danh mục Kỹ năng đa dạng
+INSERT INTO skill (skill_name) VALUES
+-- Frontend & Web Development
+('HTML5'),
+('CSS3'),
+('JavaScript (ES6+)'),
+('TypeScript'),
+('React.js'),
+('Next.js'),
+('Vue.js'),
+('Nuxt.js'),
+('Angular'),
+('Svelte'),
+('Tailwind CSS'),
+('Bootstrap'),
+('Sass / SCSS'),
+('Redux / Redux Toolkit'),
+('Zustand'),
+('TanStack Query (React Query)'),
+('Webpack / Vite'),
+('Responsive Web Design'),
+
+-- Mobile App Development
+('React Native'),
+('Flutter'),
+('Dart'),
+('Swift (iOS)'),
+('SwiftUI'),
+('Kotlin (Android)'),
+('Jetpack Compose'),
+('Objective-C'),
+
+-- Backend & Frameworks
+('Java'),
+('Spring Boot'),
+('Spring Security'),
+('Spring Cloud'),
+('Hibernate / JPA'),
+('Node.js'),
+('Express.js'),
+('NestJS'),
+('Python'),
+('Django'),
+('FastAPI'),
+('Flask'),
+('C#'),
+('.NET Core / ASP.NET'),
+('PHP'),
+('Laravel'),
+('Golang'),
+('Ruby on Rails'),
+('C / C++'),
+('Rust'),
+('RESTful API'),
+('GraphQL'),
+('gRPC'),
+('WebSocket / STOMP'),
+('Microservices Architecture'),
+
+-- Database, Caching & Message Queues
+('PostgreSQL'),
+('MySQL'),
+('Microsoft SQL Server'),
+('Oracle Database'),
+('MongoDB'),
+('Redis'),
+('Elasticsearch'),
+('SQLite'),
+('Firebase / Firestore'),
+('Apache Kafka'),
+('RabbitMQ'),
+('Database Optimization & Indexing'),
+
+-- DevOps, Cloud & System Administration
+('Docker'),
+('Kubernetes (K8s)'),
+('AWS (Amazon Web Services)'),
+('Microsoft Azure'),
+('Google Cloud Platform (GCP)'),
+('CI/CD (GitHub Actions, GitLab CI, Jenkins)'),
+('Terraform'),
+('Linux / Ubuntu Server'),
+('Nginx'),
+('Prometheus & Grafana'),
+('ELK Stack'),
+('Serverless Architecture'),
+
+-- AI, Data Science & Machine Learning
+('Python for Data Science'),
+('Pandas & NumPy'),
+('Scikit-learn'),
+('TensorFlow'),
+('PyTorch'),
+('Deep Learning'),
+('Machine Learning'),
+('Computer Vision (OpenCV)'),
+('Natural Language Processing (NLP)'),
+('Generative AI & LLMs'),
+('Prompt Engineering'),
+('RAG (Retrieval-Augmented Generation)'),
+('LangChain / LlamaIndex'),
+('Data Analysis'),
+('Power BI'),
+('Tableau'),
+('Apache Spark'),
+('Data Warehousing (BigQuery, Snowflake)'),
+
+-- Software Testing & Quality Assurance (QA/QC)
+('Manual Testing'),
+('Automation Testing'),
+('Selenium WebDriver'),
+('Cypress'),
+('Playwright'),
+('Postman / API Testing'),
+('JUnit / Mockito'),
+('JMeter / Performance Testing'),
+('Test Case Design & Execution'),
+('Bug Tracking & Reporting'),
+
+-- Security
+('Cyber Security'),
+('Penetration Testing'),
+('OWASP Top 10'),
+('Network Security'),
+('Information Security Management (ISO 27001)'),
+
+-- UI/UX & Creative Design
+('Figma'),
+('Adobe XD'),
+('Adobe Photoshop'),
+('Adobe Illustrator'),
+('Adobe Premiere Pro'),
+('Adobe After Effects'),
+('UI Design'),
+('UX Research & User Testing'),
+('Wireframing & Prototyping'),
+('Design System Building'),
+('3D Modeling (Blender, 3ds Max)'),
+
+-- Project Management & Methodologies
+('Agile / Scrum Methodologies'),
+('Jira / Confluence'),
+('Trello / Asana'),
+('Git / GitHub / GitLab'),
+('Product Management'),
+('Project Management'),
+('Business Analysis (BA)'),
+('Requirement Gathering & Analysis'),
+('UML / BPMN Diagrams'),
+
+-- Marketing, Sales & Communication
+('Digital Marketing'),
+('SEO (Search Engine Optimization)'),
+('Google Ads (SEM)'),
+('Facebook Ads / Meta Ads'),
+('TikTok Ads'),
+('Content Marketing & Copywriting'),
+('Email Marketing (Mailchimp, Klaviyo)'),
+('Social Media Management'),
+('B2B Sales'),
+('B2C Sales'),
+('Telesales & Inside Sales'),
+('Key Account Management (KAM)'),
+('Customer Relationship Management (CRM)'),
+('Salesforce / HubSpot'),
+('Market Research & Competitor Analysis'),
+('Event Planning & Public Relations (PR)'),
+
+-- Finance, Accounting & HR
+('Kế toán tài chính'),
+('Kế toán thuế & Quyết toán thuế'),
+('Lập báo cáo tài chính'),
+('Phần mềm kế toán MISA'),
+('Phần mềm kế toán FAST'),
+('Phân tích tài chính doanh nghiệp'),
+('Thẩm định tín dụng & Định giá'),
+('Quản trị nhân sự (HRM)'),
+('Tuyển dụng nhân sự (Talent Acquisition)'),
+('C&B (Compensation & Benefits)'),
+('Đào tạo và phát triển nhân lực (L&D)'),
+('Luật Lao động Việt Nam'),
+
+-- Ngoại ngữ & Kỹ năng mềm
+('Tiếng Anh giao tiếp thành thạo'),
+('Tiếng Anh thương mại (Business English)'),
+('Tiếng Nhật N1 / N2 / N3'),
+('Tiếng Hàn TOPIK 4 / 5 / 6'),
+('Tiếng Trung HSK 4 / 5 / 6'),
+('Kỹ năng giao tiếp & Đàm phán'),
+('Kỹ năng thuyết trình (Presentation Skills)'),
+('Kỹ năng giải quyết vấn đề (Problem Solving)'),
+('Kỹ năng làm việc nhóm (Teamwork)'),
+('Kỹ năng quản lý thời gian (Time Management)'),
+('Tư duy phản biện (Critical Thinking)'),
+('Khả năng chịu áp lực cao (Stress Tolerance)');
+
+COMMIT;
